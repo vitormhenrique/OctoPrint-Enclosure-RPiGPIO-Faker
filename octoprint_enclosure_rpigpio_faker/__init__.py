@@ -12,17 +12,45 @@ from __future__ import absolute_import
 import octoprint.plugin
 
 
-class EnclosurePluginRPiGPIOFakerPlugin(octoprint.plugin.SettingsPlugin,
+class EnclosurePluginRPiGPIOFakerPlugin(octoprint.plugin.StartupPlugin,
+                                        octoprint.plugin.SettingsPlugin,
                                         octoprint.plugin.AssetPlugin,
                                         octoprint.plugin.TemplatePlugin
                                         ):
+
+    # ~~ StartupPlugin
+
+    def on_startup(self, host, port):
+        self.rpi_ios = self._settings.get(["rpi_ios"])
+
+        enclosure_helpers = self._plugin_manager.get_helpers("enclosure")
+        self._logger.info("Registering plugin with Enclosure")
+        enclosure_helpers['register_plugin'](self)
+
+
+    # ~~ TemplatePlugin
+
+    def get_template_configs(self):
+        return [
+            dict(
+                type="settings",
+                template="enclosure_rpigpio_settings.jinja2",
+                custom_bindings=True
+            )
+        ]
 
     # ~~ SettingsPlugin mixin
 
     def get_settings_defaults(self):
         return {
-            # put your plugin's default settings here
+            'rpi_ios':[]
         }
+
+    def on_settings_save(self, data):
+        self._logger.info(f"Saving settings from plugin {data}")
+        old_rpi_ios = self._settings.get(["rpi_ios"])
+        octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
+        new_rpi_ios = self._settings.get(["rpi_ios"])
 
     # ~~ AssetPlugin mixin
 
@@ -30,9 +58,9 @@ class EnclosurePluginRPiGPIOFakerPlugin(octoprint.plugin.SettingsPlugin,
         # Define your plugin's asset files to automatically include in the
         # core UI here.
         return {
-            "js": ["js/octoprint_enclosure_rpigpio_faker.js"],
-            "css": ["css/octoprint_enclosure_rpigpio_faker.css"],
-            "less": ["less/octoprint_enclosure_rpigpio_faker.less"]
+            "js": ["js/enclosure_rpigpio_faker.js"],
+            "css": ["css/enclosure_rpigpio_faker.css"],
+            "less": ["less/enclosure_rpigpio_faker.less"]
         }
 
     # ~~ Softwareupdate hook
@@ -42,8 +70,8 @@ class EnclosurePluginRPiGPIOFakerPlugin(octoprint.plugin.SettingsPlugin,
         # Plugin here. See https://docs.octoprint.org/en/master/bundledplugins/softwareupdate.html
         # for details.
         return {
-            "OctoPrint-Enclosure-RPiGPIO-Faker": {
-                "displayName": "Octoprint Enclosure RPi GPIO Faker Plugin",
+            "enclosure_rpigpio_faker": {
+                "displayName": "Enclosure RPi GPIO Faker Plugin",
                 "displayVersion": self._plugin_version,
 
                 # version check: github repository
@@ -58,8 +86,8 @@ class EnclosurePluginRPiGPIOFakerPlugin(octoprint.plugin.SettingsPlugin,
         }
 
 
-
-__plugin_name__ = "OctoPrint-Enclosure-RPiGPIO-Faker"
+__plugin_name__ = "Enclosure RPiGPIO Faker"
+__plugin_pythoncompat__ = ">=3,<4"
 
 
 def __plugin_load__():
