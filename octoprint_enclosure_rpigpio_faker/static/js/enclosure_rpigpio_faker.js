@@ -72,6 +72,11 @@ $(function () {
         self.settings_unsaved = ko.observable(false);
 
         self.onBeforeBinding = function () {
+
+            // self.settingsViewModel.settings.plugins.enclosure_rpigpio_faker.rpi_ios.subscribe(function(oldValue) {
+            //     self.rpi_ios = oldValue;
+            // }, this, 'beforeChange');
+
             self.rpi_ios(self.settingsViewModel.settings.plugins.enclosure_rpigpio_faker.rpi_ios())
         };
 

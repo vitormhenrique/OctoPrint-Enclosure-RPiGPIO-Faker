@@ -10,6 +10,11 @@ from __future__ import absolute_import
 # Take a look at the documentation on what other plugin mixins are available.
 
 import octoprint.plugin
+from enum import Enum
+
+class IOType(Enum):
+    INPUT = 'input'
+    OUTPUT  = 'output'
 
 
 class EnclosurePluginRPiGPIOFakerPlugin(octoprint.plugin.StartupPlugin,
