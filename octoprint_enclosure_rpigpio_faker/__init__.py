@@ -57,6 +57,10 @@ class EnclosurePluginRPiGPIOFakerPlugin(octoprint.plugin.StartupPlugin,
         octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
         new_rpi_ios = self._settings.get(["rpi_ios"])
 
+        enclosure_helpers = self._plugin_manager.get_helpers("enclosure")
+        enclosure_helpers['register_gpio'](self)
+
+
     # ~~ AssetPlugin mixin
 
     def get_assets(self):

@@ -9,6 +9,7 @@ $(function () {
     var cleanIO = function (index_id) {
         return {
             index_id: index_id,
+            category: "gpio",
             label: "",
             input_type: "input",
         }
@@ -22,8 +23,10 @@ $(function () {
         self.index_id = ko.observable();
         self.label = ko.observable();
         self.input_type = ko.observable();
+        self.category = ko.observable();
 
         self.rpi_ios = undefined;
+        self.enclosureViewModel = undefined;
 
 
         self.validInput = ko.pureComputed(function () {
@@ -36,14 +39,16 @@ $(function () {
 
             if (data === undefined) {
                 var arrRelaysLength = self.rpi_ios().length;
-                var nextIndex = arrRelaysLength == 0 ? 1 : self.rpi_ios()[arrRelaysLength - 1].index_id() + 1;
-                data = cleanIO(nextIndex);
+                // var nextIndex = arrRelaysLength == 0 ? 1 : self.rpi_ios()[arrRelaysLength - 1].index_id() + 1;
+                var testIndex = self.enclosureViewModel.get_uuid();
+                data = cleanIO(testIndex);
             } else {
                 objIndex = self.rpi_ios().findIndex((obj => obj.index_id == data.index_id));
                 data = ko.mapping.toJS(self.rpi_ios()[objIndex]);
             }
 
             self.index_id(data.index_id);
+            self.category(data.category);
             self.label(data.label);
             self.input_type(data.input_type);
 
@@ -52,6 +57,7 @@ $(function () {
         self.toIOData = function (data) {
             var output_data = {
                 index_id: self.index_id(),
+                category: self.category(),
                 label: self.label(),
                 input_type: self.input_type(),
             }
@@ -66,16 +72,14 @@ $(function () {
         var self = this;
 
         self.settingsViewModel = parameters[0];
+        self.enclosureViewModel = parameters[1];
+
         self.rpi_ios = ko.observableArray();
         
         
         self.settings_unsaved = ko.observable(false);
 
         self.onBeforeBinding = function () {
-
-            // self.settingsViewModel.settings.plugins.enclosure_rpigpio_faker.rpi_ios.subscribe(function(oldValue) {
-            //     self.rpi_ios = oldValue;
-            // }, this, 'beforeChange');
 
             self.rpi_ios(self.settingsViewModel.settings.plugins.enclosure_rpigpio_faker.rpi_ios())
         };
@@ -88,6 +92,7 @@ $(function () {
 
         self.inputEditor = self.createIOEditor();
         self.inputEditor.rpi_ios = self.rpi_ios;
+        self.inputEditor.enclosureViewModel = self.enclosureViewModel;
 
         self.removeIO = function (data) {
             self.rpi_ios.remove(data);
@@ -122,6 +127,12 @@ $(function () {
 
             if (isNew) {
                 self.rpi_ios.push(input);
+                if (input.input_type() == 'input'){
+                    self.enclosureViewModel.enclosureInputs.push(input)
+                } else {
+                    self.enclosureViewModel.enclosureOutputs.push(input)
+                }
+                
             } else {
                 objIndex = self.rpi_ios().findIndex((obj => obj.index_id() == input.index_id()));
                 var _old_input = self.rpi_ios()[objIndex];
@@ -152,7 +163,7 @@ $(function () {
      */
     OCTOPRINT_VIEWMODELS.push({
         construct: EnclosureRPiGPIOFakerViewModel,
-        dependencies: ["settingsViewModel"],
+        dependencies: ["settingsViewModel", "enclosureViewModel"],
         elements: ["#settings_plugin_enclosure_rpigpio_faker"]
     });
 });
