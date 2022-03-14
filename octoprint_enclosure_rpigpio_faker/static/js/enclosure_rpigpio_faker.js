@@ -6,26 +6,37 @@
  */
 $(function () {
 
-    var cleanIO = function (index_id) {
+    var cleanInputIO = function (index_id) {
         return {
             index_id: index_id,
-            category: "gpio",
             label: "",
-            input_type: "input",
+            gpio_pin:"",
+            pull_resistor:"input_pull_up",
+            event_trigger:"fall"
+        }
+    };
+
+    var cleanOutputIO = function (index_id) {
+        return {
+            index_id: index_id,
+            label: "",
+            gpio_pin:"",
+            active_low:true
         }
     };
 
 
-    function IOEditorViewModel(parameters) {
+    function InputIOEditorViewModel(parameters) {
         var self = this;
 
         self.isNew = ko.observable(false);
         self.index_id = ko.observable();
         self.label = ko.observable();
-        self.input_type = ko.observable();
-        self.category = ko.observable();
-
-        self.rpi_ios = undefined;
+        self.gpio_pin = ko.observable();
+        self.pull_resistor = ko.observable();
+        self.event_trigger = ko.observable();
+        
+        self.rpi_input_ios = undefined;
         self.enclosureViewModel = undefined;
 
 
@@ -38,33 +49,86 @@ $(function () {
             self.isNew(data === undefined);
 
             if (data === undefined) {
-                var arrRelaysLength = self.rpi_ios().length;
-                // var nextIndex = arrRelaysLength == 0 ? 1 : self.rpi_ios()[arrRelaysLength - 1].index_id() + 1;
-                var testIndex = self.enclosureViewModel.get_uuid();
-                data = cleanIO(testIndex);
+                var arrRelaysLength = self.rpi_input_ios().length;
+                var nextIndex = arrRelaysLength == 0 ? 1 : self.rpi_input_ios()[arrRelaysLength - 1].index_id() + 1;
+                // var testIndex = self.enclosureViewModel.get_uuid();
+                data = cleanIO(nextIndex);
             } else {
-                objIndex = self.rpi_ios().findIndex((obj => obj.index_id == data.index_id));
-                data = ko.mapping.toJS(self.rpi_ios()[objIndex]);
+                objIndex = self.rpi_input_ios().findIndex((obj => obj.index_id == data.index_id));
+                data = ko.mapping.toJS(self.rpi_input_ios()[objIndex]);
             }
 
             self.index_id(data.index_id);
-            self.category(data.category);
             self.label(data.label);
-            self.input_type(data.input_type);
+            self.gpio_pin(data.gpio_pin);
+            self.pull_resistor(data.pull_resistor);
+            self.event_trigger(data.event_trigger);
 
+        };
+
+        self.toInputIOData = function (data) {
+            var _data = {
+                index_id: self.index_id(),
+                label: self.label(),
+                gpio_pin: self.gpio_pin(),
+                pull_resistor: self.pull_resistor(),
+                event_trigger: self.event_trigger(),
+            }
+
+            return _data;
+        };
+        // end of InputIOEditorViewModel
+    };
+
+    function OutputIOEditorViewModel(parameters) {
+        var self = this;
+
+        self.isNew = ko.observable(false);
+
+        self.index_id = ko.observable();
+        self.label = ko.observable();
+        self.gpio_pin = ko.observable();
+        self.active_low = ko.observable();
+        
+        self.rpi_output_ios = undefined;
+        self.enclosureViewModel = undefined;
+
+        self.validInput = ko.pureComputed(function () {
+            return true;
+        });
+
+        self.fromIOData = function (data) {
+
+            self.isNew(data === undefined);
+
+            if (data === undefined) {
+                var arrRelaysLength = self.rpi_output_ios().length;
+                var nextIndex = arrRelaysLength == 0 ? 1 : self.rpi_output_ios()[arrRelaysLength - 1].index_id() + 1;
+                // var testIndex = self.enclosureViewModel.get_uuid();
+                data = cleanIO(nextIndex);
+            } else {
+                objIndex = self.rpi_output_ios().findIndex((obj => obj.index_id == data.index_id));
+                data = ko.mapping.toJS(self.rpi_output_ios()[objIndex]);
+            }
+
+            self.index_id(data.index_id);
+            self.label(data.label);
+            self.gpio_pin(data.gpio_pin);
+            self.active_low(data.active_low);
+            
         };
 
         self.toIOData = function (data) {
-            var output_data = {
+            var _data = {
                 index_id: self.index_id(),
-                category: self.category(),
                 label: self.label(),
-                input_type: self.input_type(),
+                gpio_pin: self.gpio_pin(),
+                active_low: self.active_low(),
             }
 
-            return output_data;
+            return _data;
         };
-        // end of IOEditorViewModel
+        // end of OutputIOEditorViewModel
     };
 
 
@@ -74,28 +138,43 @@ $(function () {
         self.settingsViewModel = parameters[0];
         self.enclosureViewModel = parameters[1];
 
-        self.rpi_ios = ko.observableArray();
+        self.rpi_input_ios = ko.observableArray();
+        self.rpi_output_ios = ko.observableArray();
         
         
         self.settings_unsaved = ko.observable(false);
 
         self.onBeforeBinding = function () {
-
-            self.rpi_ios(self.settingsViewModel.settings.plugins.enclosure_rpigpio_faker.rpi_ios())
+            self.rpi_input_ios(self.settingsViewModel.settings.plugins.enclosure_rpigpio_faker.rpi_input_ios())
+            self.rpi_output_ios(self.settingsViewModel.settings.plugins.enclosure_rpigpio_faker.rpi_output_ios())
         };
 
 
-        self.createIOEditor = function (data) {
-            var inputEditor = new IOEditorViewModel();
+        self.createInputIOEditor = function (data) {
+            var inputEditor = new InputIOEditorViewModel();
             return inputEditor;
         };
 
-        self.inputEditor = self.createIOEditor();
-        self.inputEditor.rpi_ios = self.rpi_ios;
-        self.inputEditor.enclosureViewModel = self.enclosureViewModel;
+        self.createOutputIOEditor = function (data) {
+            var outputEditor = new OutputIOEditorViewModel();
+            return outputEditor;
+        };
 
-        self.removeIO = function (data) {
-            self.rpi_ios.remove(data);
+        self.inputEditor = self.createIOEditor();
+        self.inputEditor.rpi_input_ios = self.rpi_input_ios;
+        // self.inputEditor.enclosureViewModel = self.enclosureViewModel;
+
+        self.outputEditor = self.createIOEditor();
+        self.outputEditor.rpi_output_ios = self.rpi_output_ios;
+        // self.outputEditor.enclosureViewModel = self.enclosureViewModel;
+
+        self.removeInputIO = function (data) {
+            self.rpi_input_ios.remove(data);
+            self.settings_unsaved(true);
+        }
+
+        self.removeOutputIO = function (data) {
+            self.rpi_output_ios.remove(data);
             self.settings_unsaved(true);
         }
 
@@ -157,13 +236,9 @@ $(function () {
 
     }
 
-    /* view model class, parameters for constructor, container to bind to
-     * Please see http://docs.octoprint.org/en/master/plugins/viewmodels.html#registering-custom-viewmodels for more details
-     * and a full list of the available options.
-     */
     OCTOPRINT_VIEWMODELS.push({
         construct: EnclosureRPiGPIOFakerViewModel,
-        dependencies: ["settingsViewModel", "enclosureViewModel"],
+        dependencies: ["settingsViewModel"],
         elements: ["#settings_plugin_enclosure_rpigpio_faker"]
     });
 });

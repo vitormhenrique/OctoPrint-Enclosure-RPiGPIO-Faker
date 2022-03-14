@@ -12,10 +12,18 @@ from __future__ import absolute_import
 import octoprint.plugin
 from enum import Enum
 
-class IOType(Enum):
-    INPUT = 'input'
-    OUTPUT  = 'output'
 
+class EnclosurePluginType:
+    INPUT = 'input'
+    OUTPUT  = 'output'    
+
+class InputValues:
+    RISING = 'Rising'
+    FALLING = 'Falling'
+
+class OutputValues:
+    HIGH = 'High'
+    LOW = 'Low'
 
 class EnclosurePluginRPiGPIOFakerPlugin(octoprint.plugin.StartupPlugin,
                                         octoprint.plugin.SettingsPlugin,
@@ -48,7 +56,10 @@ class EnclosurePluginRPiGPIOFakerPlugin(octoprint.plugin.StartupPlugin,
 
     def get_settings_defaults(self):
         return {
-            'rpi_ios':[]
+            # 'plugin_type': [e.value for e in EnclosurePluginType],
+            # 'rpi_ios':[]
+            rpi_inputs:[],
+            rpi_outputs:[]
         }
 
     def on_settings_save(self, data):
