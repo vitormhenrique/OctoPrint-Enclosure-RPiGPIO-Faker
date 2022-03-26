@@ -66,7 +66,7 @@ $(function () {
 
         };
 
-        self.toInputIOData = function (data) {
+        self.toInputData = function (data) {
             var _data = {
                 index_id: self.index_id(),
                 label: self.label(),
@@ -118,7 +118,7 @@ $(function () {
             
         };
 
-        self.toIOData = function (data) {
+        self.toOutputData = function (data) {
             var _data = {
                 index_id: self.index_id(),
                 label: self.label(),
@@ -221,7 +221,7 @@ $(function () {
 
             self.settings_unsaved(true);
 
-            var input = ko.mapping.fromJS(self.inputEditor.toIOData());
+            var input = ko.mapping.fromJS(self.inputEditor.toInputData());
 
             if (isNew) {
                 self.rpi_input_ios.push(input);
@@ -247,7 +247,7 @@ $(function () {
 
             self.settings_unsaved(true);
 
-            var input = ko.mapping.fromJS(self.outputEditor.toIOData());
+            var input = ko.mapping.fromJS(self.outputEditor.toOutputData());
 
             if (isNew) {
                 self.rpi_output_ios.push(input);                

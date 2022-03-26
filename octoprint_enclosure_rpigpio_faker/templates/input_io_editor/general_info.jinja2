@@ -3,7 +3,7 @@
   <div class="control-group">
     <label class="control-label">{{ _('Input ID') }}</label>
     <div class="controls">
-      <input type="text" data-bind="value: inputEditor.index_id" readonly>      
+      <input type="text" data-bind="value: inputEditor.index_id" readonly>
       <span class="help-inline">Auto generated ID for Input</span>
     </div>
   </div>
@@ -28,12 +28,13 @@
   <div class="control-group">
     <label class="control-label">{{ _('Pull Resistor') }}</label>
     <div class="controls">
-      <select data-bind="value: input_pull_resistor">
+      <select data-bind="value: inputEditor.pull_resistor">
         <option value="none">None</option>
         <option value="input_pull_up">Input Pull-up</option>
         <option value="input_pull_down">Input Pull-down</option>
       </select>
-      <span class="help-inline">Choose what type of pull resistors that you want on the output. If your signal is active low, that means it should
+      <span class="help-inline">Choose what type of pull resistors that you want on the output. If your signal is active
+        low, that means it should
         run the action when receive a low signal (ground), you should choose PULL UP resistors.</span>
     </div>
   </div>
@@ -41,12 +42,14 @@
   <div class="control-group">
     <label class="control-label">{{ _('Event Trigger On') }}</label>
     <div class="controls">
-      <select data-bind="value: edge">
+      <select data-bind="value: inputEditor.event_trigger">
         <option value="rise">Rise</option>
         <option value="fall">Fall</option>
       </select>
-      <span class="help-inline">Do you want to trigger the event on the rise or falling edge? If you signal is active low, that means it should run
+      <span class="help-inline">Do you want to trigger the event on the rise or falling edge? If you signal is active
+        low, that means it should run
         the action when it receives a low signal (ground), you should choose FALLING EDGE.</span>
+    </div>
   </div>
 
 
