@@ -1,0 +1,36 @@
+<form class="form-horizontal">
+
+  <div class="control-group">
+    <label class="control-label">{{ _('Output ID') }}</label>
+    <div class="controls">
+      <input type="text" data-bind="value: outputEditor.index_id" readonly>      
+      <span class="help-inline">Auto generated ID for Output</span>
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label">{{ _('Name') }}</label>
+    <div class="controls">
+      <input type="text" data-bind="value: outputEditor.label, valueUpdate: 'afterkeydown'">
+      <span class="help-inline">Name displayed on Enclosure Tab</span>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label">{{ _('GPIO Pin') }}</label>
+    <div class="controls">
+      <input type="text" class="input-block-level" data-bind="value: outputEditor.gpio_pin" value="4">
+      <span class="help-inline">GPIO pin used for the output</span>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label">{{ _('Active Low') }}</label>
+    <div class="controls">
+      <label class="checkbox">
+        <input type="checkbox" data-bind="checked: outputEditor.active_low"> {{ _('Active Low') }}
+      </label>
+      <span class="help-inline">Active low means that the GPIO will turn on when receive a low signal (ground) from Raspberry PI</span>
+    </div>
+  </div>
+
+</form>

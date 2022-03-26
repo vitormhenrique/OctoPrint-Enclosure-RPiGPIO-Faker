@@ -34,11 +34,13 @@ class EnclosurePluginRPiGPIOFakerPlugin(octoprint.plugin.StartupPlugin,
     # ~~ StartupPlugin
 
     def on_startup(self, host, port):
-        self.rpi_ios = self._settings.get(["rpi_ios"])
+        
+        self.rpi_input_ios = self._settings.get(["rpi_input_ios"])
+        self.rpi_output_ios = self._settings.get(["rpi_output_ios"])
 
         enclosure_helpers = self._plugin_manager.get_helpers("enclosure")
         self._logger.info("Registering plugin with Enclosure")
-        enclosure_helpers['register_plugin'](self)
+        # enclosure_helpers['register_plugin'](self)
 
 
     # ~~ TemplatePlugin
@@ -56,17 +58,15 @@ class EnclosurePluginRPiGPIOFakerPlugin(octoprint.plugin.StartupPlugin,
 
     def get_settings_defaults(self):
         return {
-            # 'plugin_type': [e.value for e in EnclosurePluginType],
-            # 'rpi_ios':[]
-            rpi_inputs:[],
-            rpi_outputs:[]
+            'rpi_input_ios':[],
+            'rpi_output_ios':[]
         }
 
     def on_settings_save(self, data):
         self._logger.info(f"Saving settings from plugin {data}")
-        old_rpi_ios = self._settings.get(["rpi_ios"])
+        old_rpi_ios = self._settings.get(["old_rpi_ios"])
         octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
-        new_rpi_ios = self._settings.get(["rpi_ios"])
+        new_rpi_ios = self._settings.get(["new_rpi_ios"])
 
         enclosure_helpers = self._plugin_manager.get_helpers("enclosure")
         enclosure_helpers['register_gpio'](self)

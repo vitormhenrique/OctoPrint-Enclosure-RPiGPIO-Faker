@@ -1,4 +1,4 @@
-<div id="settings_io_edit_dialog" class="modal hide fade">
+<div id="settings_output_io_edit_dialog" class="modal hide fade">
     <div class="modal-header">
         <a href="#" class="close" data-dismiss="modal" aria-hidden="true">&times;</a>
         <h3 class="modal-title">Add / Edit IO</h3>
@@ -7,15 +7,15 @@
 
         <div class="full-sized-box">
             <ul class="nav nav-pills">
-                <li class="active"><a href="#settings_io_edit_dialog_general"
+                <li class="active"><a href="#settings_output_io_edit_dialog_general"
                         data-toggle="tab">{{ _('General') }}</a></li>
 
 
             </ul>
 
             <div class="tab-content">
-                <div id="settings_io_edit_dialog_general" c lass="tab-pane active">
-                    {% include "io_editor/general_info.jinja2" %}
+                <div id="settings_output_io_edit_dialog_general" c lass="tab-pane active">
+                    {% include "output_io_editor/general_info.jinja2" %}
                 </div>
             </div>
         </div>
@@ -25,6 +25,6 @@
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">{{ _('Abort') }}</button>
         <button class="btn btn-primary btn-confirm"
-            data-bind="click: function() { $root.confirmEditIO();}, css: {disabled: !inputEditor.validInput()}">{{ _('Save') }}</button>
+            data-bind="click: function() { $root.confirmEditIO();}, css: {disabled: !outputEditor.validInput()}">{{ _('Save') }}</button>
     </div>
 </div>

@@ -52,7 +52,7 @@ $(function () {
                 var arrRelaysLength = self.rpi_input_ios().length;
                 var nextIndex = arrRelaysLength == 0 ? 1 : self.rpi_input_ios()[arrRelaysLength - 1].index_id() + 1;
                 // var testIndex = self.enclosureViewModel.get_uuid();
-                data = cleanIO(nextIndex);
+                data = cleanInputIO(nextIndex);
             } else {
                 objIndex = self.rpi_input_ios().findIndex((obj => obj.index_id == data.index_id));
                 data = ko.mapping.toJS(self.rpi_input_ios()[objIndex]);
@@ -105,7 +105,7 @@ $(function () {
                 var arrRelaysLength = self.rpi_output_ios().length;
                 var nextIndex = arrRelaysLength == 0 ? 1 : self.rpi_output_ios()[arrRelaysLength - 1].index_id() + 1;
                 // var testIndex = self.enclosureViewModel.get_uuid();
-                data = cleanIO(nextIndex);
+                data = cleanOutputIO(nextIndex);
             } else {
                 objIndex = self.rpi_output_ios().findIndex((obj => obj.index_id == data.index_id));
                 data = ko.mapping.toJS(self.rpi_output_ios()[objIndex]);
@@ -160,11 +160,11 @@ $(function () {
             return outputEditor;
         };
 
-        self.inputEditor = self.createIOEditor();
+        self.inputEditor = self.createInputIOEditor();
         self.inputEditor.rpi_input_ios = self.rpi_input_ios;
         // self.inputEditor.enclosureViewModel = self.enclosureViewModel;
 
-        self.outputEditor = self.createIOEditor();
+        self.outputEditor = self.createOutputIOEditor();
         self.outputEditor.rpi_output_ios = self.rpi_output_ios;
         // self.outputEditor.enclosureViewModel = self.enclosureViewModel;
 
@@ -178,11 +178,11 @@ $(function () {
             self.settings_unsaved(true);
         }
 
-        self.showIODialog = function (data) {
+        self.showInputIODialog = function (data) {
 
             self.inputEditor.fromIOData(data);
 
-            var editDialog = $("#settings_io_edit_dialog");
+            var editDialog = $("#settings_input_io_edit_dialog");
 
             $('ul.nav-pills a[data-toggle="tab"]:first', editDialog).tab("show");
             editDialog.modal({
@@ -197,7 +197,26 @@ $(function () {
             });
         };
 
-        self.addIO = function (callback) {
+        self.showOutputIODialog = function (data) {
+
+            self.outputEditor.fromIOData(data);
+
+            var editDialog = $("#settings_output_io_edit_dialog");
+
+            $('ul.nav-pills a[data-toggle="tab"]:first', editDialog).tab("show");
+            editDialog.modal({
+                minHeight: function () {
+                    return Math.max($.fn.modal.defaults.maxHeight() - 80, 250);
+                }
+            }).css({
+                width: 'auto',
+                'margin-left': function () {
+                    return -($(this).width());
+                }
+            });
+        };
+
+        self.addInputIO = function (callback) {
             var isNew = self.inputEditor.isNew();
 
             self.settings_unsaved(true);
@@ -205,17 +224,17 @@ $(function () {
             var input = ko.mapping.fromJS(self.inputEditor.toIOData());
 
             if (isNew) {
-                self.rpi_ios.push(input);
-                if (input.input_type() == 'input'){
-                    self.enclosureViewModel.enclosureInputs.push(input)
-                } else {
-                    self.enclosureViewModel.enclosureOutputs.push(input)
-                }
+                self.rpi_input_ios.push(input);
+                // if (input.input_type() == 'input'){
+                //     self.enclosureViewModel.enclosureInputs.push(input)
+                // } else {
+                //     self.enclosureViewModel.enclosureOutputs.push(input)
+                // }
                 
             } else {
-                objIndex = self.rpi_ios().findIndex((obj => obj.index_id() == input.index_id()));
-                var _old_input = self.rpi_ios()[objIndex];
-                self.rpi_ios.replace(_old_input, input);
+                objIndex = self.rpi_input_ios().findIndex((obj => obj.index_id() == input.index_id()));
+                var _old_input = self.rpi_input_ios()[objIndex];
+                self.rpi_input_ios.replace(_old_input, input);
             }
 
             if (callback !== undefined) {
@@ -223,14 +242,45 @@ $(function () {
             }
         };
 
-        self.confirmEditIO = function () {
+        self.addOutputIO = function (callback) {
+            var isNew = self.outputEditor.isNew();
+
+            self.settings_unsaved(true);
+
+            var input = ko.mapping.fromJS(self.outputEditor.toIOData());
+
+            if (isNew) {
+                self.rpi_output_ios.push(input);                
+            } else {
+                objIndex = self.rpi_output_ios().findIndex((obj => obj.index_id() == input.index_id()));
+                var _old_input = self.rpi_output_ios()[objIndex];
+                self.rpi_output_ios.replace(_old_input, input);
+            }
+
+            if (callback !== undefined) {
+                callback();
+            }
+        };
+
+        self.confirmEditInputIO = function () {
 
             if (self.inputEditor.validInput()) {
                 var callback = function () {
-                    $("#settings_io_edit_dialog").modal("hide");
+                    $("#settings_input_io_edit_dialog").modal("hide");
                 };
 
-                self.addIO(callback);
+                self.addInputIO(callback);
+            }
+        };
+
+        self.confirmEditOutputIO = function () {
+
+            if (self.outputEditor.validInput()) {
+                var callback = function () {
+                    $("#settings_output_io_edit_dialog").modal("hide");
+                };
+
+                self.addOutputIO(callback);
             }
         };
 

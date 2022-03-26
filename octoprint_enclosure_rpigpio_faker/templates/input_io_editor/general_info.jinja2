@@ -1,0 +1,53 @@
+<form class="form-horizontal">
+
+  <div class="control-group">
+    <label class="control-label">{{ _('Input ID') }}</label>
+    <div class="controls">
+      <input type="text" data-bind="value: inputEditor.index_id" readonly>      
+      <span class="help-inline">Auto generated ID for Input</span>
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label">{{ _('Name') }}</label>
+    <div class="controls">
+      <input type="text" data-bind="value: inputEditor.label, valueUpdate: 'afterkeydown'">
+      <span class="help-inline">Name displayed on Enclosure Tab</span>
+    </div>
+  </div>
+
+
+  <div class="control-group">
+    <label class="control-label">{{ _('GPIO Pin') }}</label>
+    <div class="controls">
+      <input type="text" class="input-block-level" data-bind="value: inputEditor.gpio_pin" value="4">
+      <span class="help-inline">GPIO pin used for the output</span>
+    </div>
+  </div>
+
+
+  <div class="control-group">
+    <label class="control-label">{{ _('Pull Resistor') }}</label>
+    <div class="controls">
+      <select data-bind="value: input_pull_resistor">
+        <option value="none">None</option>
+        <option value="input_pull_up">Input Pull-up</option>
+        <option value="input_pull_down">Input Pull-down</option>
+      </select>
+      <span class="help-inline">Choose what type of pull resistors that you want on the output. If your signal is active low, that means it should
+        run the action when receive a low signal (ground), you should choose PULL UP resistors.</span>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label">{{ _('Event Trigger On') }}</label>
+    <div class="controls">
+      <select data-bind="value: edge">
+        <option value="rise">Rise</option>
+        <option value="fall">Fall</option>
+      </select>
+      <span class="help-inline">Do you want to trigger the event on the rise or falling edge? If you signal is active low, that means it should run
+        the action when it receives a low signal (ground), you should choose FALLING EDGE.</span>
+  </div>
+
+
+</form>

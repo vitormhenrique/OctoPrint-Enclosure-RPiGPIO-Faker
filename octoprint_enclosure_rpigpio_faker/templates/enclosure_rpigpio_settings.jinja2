@@ -2,12 +2,16 @@
 
 
 
-    <h4>{{ _('Raspberry Faker IO') }}</h4>
+    <h4>{{ _('Raspberry Faker Inputs') }}</h4>
 
+    {% include "input_io_table.jinja2" %}
 
-    {% include "io_table.jinja2" %}
+    <h4>{{ _('Raspberry Faker Outputs') }}</h4>
+
+    {% include "output_io_table.jinja2" %}
 
 </form>
 
-{% include "io_editor/main_screen.jinja2" %}
+{% include "input_io_editor/main_screen.jinja2" %}
+{% include "output_io_editor/main_screen.jinja2" %}
 
